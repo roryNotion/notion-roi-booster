@@ -98,7 +98,7 @@ const ROICalculator: React.FC = () => {
       />
 
       <div className="mt-6 text-center text-sm text-muted-foreground">
-        <p>This calculator provides an estimate of potential cost savings when using Notion AI for your team.</p>
+        <p>This calculator provides an estimate of potential cost savings when using Notion</p>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { CalculationResults, formatCurrency, formatPercent } from '@/utils/calculationUtils';
@@ -69,6 +68,33 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ results }) => {
     {
       name: '5 Years',
       ROI: multiYearRoi.year5,
+    },
+  ];
+
+  // Calculate compounded costs for 1, 3, and 5 years with 10% annual increase
+  const getCompoundedCost = (base: number, years: number) => {
+    let cost = base;
+    for (let i = 1; i < years; i++) {
+      cost *= 1.1;
+    }
+    return cost;
+  };
+
+  const costComparisonChartData = [
+    {
+      name: '1 Year',
+      'Current Setup': existingToolsCost,
+      'With Notion': totalAnnualToolCost,
+    },
+    {
+      name: '3 Years',
+      'Current Setup': getCompoundedCost(existingToolsCost, 3),
+      'With Notion': getCompoundedCost(totalAnnualToolCost, 3),
+    },
+    {
+      name: '5 Years',
+      'Current Setup': getCompoundedCost(existingToolsCost, 5),
+      'With Notion': getCompoundedCost(totalAnnualToolCost, 5),
     },
   ];
 
@@ -152,64 +178,26 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ results }) => {
       </div>
 
       <div className="flex-grow mt-4">
-        <Tabs defaultValue="comparison" onValueChange={(value) => setChartView(value as 'comparison' | 'roi')}>
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-medium text-muted-foreground">Visualization</h3>
-            <TabsList>
-              <TabsTrigger value="comparison">Time & Cost</TabsTrigger>
-              <TabsTrigger value="roi">Multi-Year ROI</TabsTrigger>
-            </TabsList>
-          </div>
-          
-          <TabsContent value="comparison" className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={timeAndCostChartData}
-                margin={{
-                  top: 10,
-                  right: 30,
-                  left: 0,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <RechartsTooltip formatter={(value, name) => {
-                  if (name === "Time") {
-                    return [`${Math.round(Number(value) / 60)} hours`, name];
-                  }
-                  return [formatCurrency(Number(value)), name];
-                }} />
-                <Legend />
-                <Bar dataKey="Current" fill="#37352F" />
-                <Bar dataKey="With Notion" fill="#2383E2" />
-              </BarChart>
-            </ResponsiveContainer>
-          </TabsContent>
-          
-          <TabsContent value="roi" className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={roiChartData}
-                margin={{
-                  top: 10,
-                  right: 30,
-                  left: 0,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis tickFormatter={(value) => `${Math.round(value / 100)}%`} />
-                <RechartsTooltip 
-                  formatter={(value) => [formatPercent(Number(value)), "ROI"]}
-                />
-                <Bar dataKey="ROI" fill="#2383E2" />
-              </BarChart>
-            </ResponsiveContainer>
-          </TabsContent>
-        </Tabs>
+        <h3 className="text-sm font-medium text-muted-foreground mb-4">Visualisation</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart
+            data={costComparisonChartData}
+            margin={{
+              top: 10,
+              right: 30,
+              left: 0,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis tickFormatter={formatCurrency} />
+            <RechartsTooltip formatter={(value) => [formatCurrency(Number(value))]} />
+            <Legend />
+            <Bar dataKey="Current Setup" fill="#37352F" />
+            <Bar dataKey="With Notion" fill="#2383E2" />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
