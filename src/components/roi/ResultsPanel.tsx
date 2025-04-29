@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { CalculationResults, formatCurrency, formatPercent } from '@/utils/calculationUtils';
 import { Info } from 'lucide-react';
@@ -19,6 +19,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ResultsPanelProps {
   results: CalculationResults;
@@ -36,10 +37,14 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ results }) => {
     totalAnnualToolCost,
     hoursSavedPerEmployee,
     valueSavedPerEmployee,
-    paybackPeriod
+    paybackPeriod,
+    multiYearRoi,
+    existingToolsCost
   } = results;
 
-  const chartData = [
+  const [chartView, setChartView] = useState<'comparison' | 'roi'>('comparison');
+
+  const timeAndCostChartData = [
     {
       name: 'Time',
       Current: currentTimeSpent,
@@ -49,6 +54,21 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ results }) => {
       name: 'Cost',
       Current: currentCost,
       'With Notion': notionCost,
+    },
+  ];
+
+  const roiChartData = [
+    {
+      name: '1 Year',
+      ROI: multiYearRoi.year1,
+    },
+    {
+      name: '3 Years',
+      ROI: multiYearRoi.year3,
+    },
+    {
+      name: '5 Years',
+      ROI: multiYearRoi.year5,
     },
   ];
 
@@ -92,6 +112,14 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ results }) => {
           tooltip="The total yearly cost of Notion licenses for all employees."
         />
 
+        {existingToolsCost > 0 && (
+          <MetricCard 
+            title="Existing Tools Cost (Annual)" 
+            value={formatCurrency(existingToolsCost)}
+            tooltip="The annual cost of all existing tools that would be replaced by Notion."
+          />
+        )}
+
         <MetricCard 
           title="Return on Investment" 
           value={formatPercent(roi)}
@@ -124,33 +152,64 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ results }) => {
       </div>
 
       <div className="flex-grow mt-4">
-        <h3 className="text-sm font-medium text-muted-foreground mb-4">Comparison: Current vs. With Notion</h3>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={chartData}
-              margin={{
-                top: 10,
-                right: 30,
-                left: 0,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <RechartsTooltip formatter={(value, name) => {
-                if (name === "Time") {
-                  return [`${Math.round(Number(value) / 60)} hours`, name];
-                }
-                return [formatCurrency(Number(value)), name];
-              }} />
-              <Legend />
-              <Bar dataKey="Current" fill="#37352F" />
-              <Bar dataKey="With Notion" fill="#2383E2" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <Tabs defaultValue="comparison" onValueChange={(value) => setChartView(value as 'comparison' | 'roi')}>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-sm font-medium text-muted-foreground">Visualization</h3>
+            <TabsList>
+              <TabsTrigger value="comparison">Time & Cost</TabsTrigger>
+              <TabsTrigger value="roi">Multi-Year ROI</TabsTrigger>
+            </TabsList>
+          </div>
+          
+          <TabsContent value="comparison" className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={timeAndCostChartData}
+                margin={{
+                  top: 10,
+                  right: 30,
+                  left: 0,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <RechartsTooltip formatter={(value, name) => {
+                  if (name === "Time") {
+                    return [`${Math.round(Number(value) / 60)} hours`, name];
+                  }
+                  return [formatCurrency(Number(value)), name];
+                }} />
+                <Legend />
+                <Bar dataKey="Current" fill="#37352F" />
+                <Bar dataKey="With Notion" fill="#2383E2" />
+              </BarChart>
+            </ResponsiveContainer>
+          </TabsContent>
+          
+          <TabsContent value="roi" className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={roiChartData}
+                margin={{
+                  top: 10,
+                  right: 30,
+                  left: 0,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis tickFormatter={(value) => `${Math.round(value / 100)}%`} />
+                <RechartsTooltip 
+                  formatter={(value) => [formatPercent(Number(value)), "ROI"]}
+                />
+                <Bar dataKey="ROI" fill="#2383E2" />
+              </BarChart>
+            </ResponsiveContainer>
+          </TabsContent>
+        </Tabs>
       </div>
       
       <div className="mt-4">

@@ -15,6 +15,13 @@ export interface InputValues {
   pricePerSeat: number;
 }
 
+export interface ToolCost {
+  id: string;
+  name: string;
+  seatsCount: number;
+  pricePerSeat: number;
+}
+
 export const defaultAssumptions: AssumptionValues = {
   aiCallsPerWeek: 20,
   minutesPerAiCall: 2,
@@ -34,10 +41,20 @@ export interface CalculationResults {
   hoursSavedPerEmployee: number;
   valueSavedPerEmployee: number;
   paybackPeriod: number;
+  multiYearRoi: {
+    year1: number;
+    year3: number;
+    year5: number;
+  };
+  existingToolsCost: number;
 }
 
 // Calculate ROI based on inputs and assumptions
-export const calculateROI = (inputs: InputValues, assumptions: AssumptionValues): CalculationResults => {
+export const calculateROI = (
+  inputs: InputValues, 
+  assumptions: AssumptionValues,
+  existingTools: ToolCost[] = []
+): CalculationResults => {
   const { employees, averageSalary, timeSavedPercent, pricePerSeat } = inputs;
   const { aiCallsPerWeek, minutesPerAiCall, contextSwitchesPerDay, minutesPerContextSwitch } = assumptions;
 
@@ -59,11 +76,22 @@ export const calculateROI = (inputs: InputValues, assumptions: AssumptionValues)
   // Calculate total cost savings
   const totalCostSaved = annualMinutesSaved * costPerMinute;
 
+  // Calculate cost of existing tools
+  const existingToolsCost = existingTools.reduce((acc, tool) => {
+    return acc + (tool.seatsCount * tool.pricePerSeat * 12); // Annual cost
+  }, 0);
+
   // Calculate estimated Notion cost based on price per seat
   const totalAnnualToolCost = employees * pricePerSeat * 12;
 
-  // Calculate ROI percentage
-  const roi = (totalCostSaved / totalAnnualToolCost) * 100;
+  // Calculate ROI percentage - including replacement of existing tools
+  const roi = ((totalCostSaved + existingToolsCost) / totalAnnualToolCost) * 100;
+
+  // Calculate multi-year ROI (simplified, assuming consistent savings)
+  // In a real-world scenario, you might want to account for salary increases, etc.
+  const year1Roi = roi;
+  const year3Roi = ((totalCostSaved * 3 + existingToolsCost * 3) / (totalAnnualToolCost * 3)) * 100;
+  const year5Roi = ((totalCostSaved * 5 + existingToolsCost * 5) / (totalAnnualToolCost * 5)) * 100;
 
   // Calculate time to productivity (in days)
   // Assuming 8 working hours per day
@@ -101,7 +129,13 @@ export const calculateROI = (inputs: InputValues, assumptions: AssumptionValues)
     totalAnnualToolCost,
     hoursSavedPerEmployee,
     valueSavedPerEmployee,
-    paybackPeriod
+    paybackPeriod,
+    multiYearRoi: {
+      year1: year1Roi,
+      year3: year3Roi,
+      year5: year5Roi
+    },
+    existingToolsCost
   };
 };
 
