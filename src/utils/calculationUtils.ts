@@ -12,6 +12,7 @@ export interface InputValues {
   employees: number;
   averageSalary: number;
   timeSavedPercent: number;
+  pricePerSeat: number;
 }
 
 export const defaultAssumptions: AssumptionValues = {
@@ -29,11 +30,15 @@ export interface CalculationResults {
   notionTimeSpent: number;
   currentCost: number;
   notionCost: number;
+  totalAnnualToolCost: number;
+  hoursSavedPerEmployee: number;
+  valueSavedPerEmployee: number;
+  paybackPeriod: number;
 }
 
 // Calculate ROI based on inputs and assumptions
 export const calculateROI = (inputs: InputValues, assumptions: AssumptionValues): CalculationResults => {
-  const { employees, averageSalary, timeSavedPercent } = inputs;
+  const { employees, averageSalary, timeSavedPercent, pricePerSeat } = inputs;
   const { aiCallsPerWeek, minutesPerAiCall, contextSwitchesPerDay, minutesPerContextSwitch } = assumptions;
 
   // Calculate total salary cost
@@ -54,12 +59,11 @@ export const calculateROI = (inputs: InputValues, assumptions: AssumptionValues)
   // Calculate total cost savings
   const totalCostSaved = annualMinutesSaved * costPerMinute;
 
-  // Calculate estimated Notion cost (for ROI calculation)
-  // Simplified: Assuming $10 per user per month
-  const estimatedNotionCost = employees * 10 * 12;
+  // Calculate estimated Notion cost based on price per seat
+  const totalAnnualToolCost = employees * pricePerSeat * 12;
 
   // Calculate ROI percentage
-  const roi = (totalCostSaved / estimatedNotionCost) * 100;
+  const roi = (totalCostSaved / totalAnnualToolCost) * 100;
 
   // Calculate time to productivity (in days)
   // Assuming 8 working hours per day
@@ -77,6 +81,15 @@ export const calculateROI = (inputs: InputValues, assumptions: AssumptionValues)
   const currentCost = averageSalary;
   const notionCost = averageSalary * (1 - (timeSavedPercent / 100));
 
+  // Calculate hours saved per employee
+  const hoursSavedPerEmployee = (workHoursPerYear * timeSavedPercent) / 100;
+  
+  // Calculate value saved per employee
+  const valueSavedPerEmployee = hoursSavedPerEmployee * (averageSalary / workHoursPerYear);
+  
+  // Calculate payback period in months (how long until the tool pays for itself)
+  const paybackPeriod = (pricePerSeat * 12) / valueSavedPerEmployee;
+
   return {
     annualCostSavings: totalCostSaved,
     roi: roi,
@@ -84,7 +97,11 @@ export const calculateROI = (inputs: InputValues, assumptions: AssumptionValues)
     currentTimeSpent,
     notionTimeSpent,
     currentCost,
-    notionCost
+    notionCost,
+    totalAnnualToolCost,
+    hoursSavedPerEmployee,
+    valueSavedPerEmployee,
+    paybackPeriod
   };
 };
 

@@ -11,6 +11,7 @@ const ROICalculator: React.FC = () => {
     employees: 100,
     averageSalary: 80000,
     timeSavedPercent: 15,
+    pricePerSeat: 10, // Default price per seat
   });
 
   const [assumptions, setAssumptions] = useState<AssumptionValues>(defaultAssumptions);
