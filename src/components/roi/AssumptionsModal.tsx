@@ -49,7 +49,7 @@ const AssumptionsModal: React.FC<AssumptionsModalProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-notion-darkgray">Advanced Assumptions</DialogTitle>
+          <DialogTitle className="text-xl font-semibold text-notion-darkgray">Assumptions</DialogTitle>
         </DialogHeader>
         
         <div className="grid gap-6 py-4">

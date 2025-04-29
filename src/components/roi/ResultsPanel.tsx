@@ -211,17 +211,6 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ results }) => {
           </TabsContent>
         </Tabs>
       </div>
-      
-      <div className="mt-4">
-        <h3 className="text-sm font-medium text-notion-darkgray mb-2">Qualitative Benefits</h3>
-        <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
-          <li>Improved employee satisfaction and reduced burnout</li>
-          <li>Higher quality of deliverables and documentation</li>
-          <li>Better knowledge sharing and collaboration</li>
-          <li>Faster decision-making and increased project throughput</li>
-          <li>Reduced employee churn and training costs</li>
-        </ul>
-      </div>
     </div>
   );
 };

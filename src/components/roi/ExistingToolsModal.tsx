@@ -103,7 +103,7 @@ const ExistingToolsModal: React.FC<ExistingToolsModalProps> = ({
               <div>
                 <Label htmlFor={`tool-price-${index}`} className="sr-only">Price per Seat</Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2">$</span>
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">$</span>
                   <Input
                     id={`tool-price-${index}`}
                     type="number"

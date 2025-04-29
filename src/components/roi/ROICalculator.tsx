@@ -34,7 +34,7 @@ const ROICalculator: React.FC = () => {
       <h1 className="text-2xl font-bold text-center mb-8 text-notion-darkgray">Notion ROI Calculator</h1>
       
       <div className={`grid ${isMobile ? 'grid-cols-1 gap-6' : 'grid-cols-2 gap-8'}`}>
-        <div>
+        <div className={`${isMobile ? '' : 'sticky top-4 self-start'}`}>
           <InputPanel 
             inputs={inputs}
             onChange={setInputs}
