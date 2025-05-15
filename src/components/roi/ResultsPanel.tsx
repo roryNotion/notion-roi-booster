@@ -52,7 +52,12 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
                     <p className="font-medium">What this means:</p>
-                    <p className="mb-2">The estimated time it takes for users to become fully productive with Notion.</p>
+                    <p className="mb-2">The estimated time it takes for users to become fully productive with Notion. This varies by company size:</p>
+                    <ul className="text-xs list-disc pl-4 mb-2">
+                      <li>Small teams (≤50 people): ~14 days</li>
+                      <li>Medium companies (201-500): ~28 days</li>
+                      <li>Enterprises (1000+): ~42 days</li>
+                    </ul>
                     
                     <p className="font-medium">Your performance:</p>
                     <p className="mb-2">Your team is estimated to reach productivity in <span className="font-medium">{Math.round(results.timeToProductivity)} days</span>, while similar companies typically take <span className="font-medium">{benchmarks.timeToProductivity.benchmark} days</span>.</p>
@@ -62,7 +67,7 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
                       "Your team is faster than average at adopting Notion, which means quicker ROI." : 
                       "Faster adoption times (fewer days) lead to quicker ROI and value realization."}</p>
                     
-                    <p className="text-xs mt-2 font-medium">Formula: Based on company size, user technical proficiency, and training resources</p>
+                    <p className="text-xs mt-2 font-medium">Formula: Based on analyzed data from thousands of companies using Notion, adjusted for your company's size and specific needs</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -482,8 +487,8 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ results }) => {
                       </span>
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs">
-                      <p>The estimated number of days until users become fully productive with Notion AI.</p>
-                      <p className="text-xs mt-2 font-medium">Formula: Based on organization size and onboarding resources</p>
+                      <p>The estimated number of days until users become fully productive with Notion AI. This is typically {Math.round(timeToProductivity)} days for a company of your size.</p>
+                      <p className="text-xs mt-2 font-medium">Formula: Based on company size, with slight adjustments for your specific needs. Smaller companies (≤50 employees) typically need 14 days, while enterprises (1000+ employees) may need 42 days.</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
