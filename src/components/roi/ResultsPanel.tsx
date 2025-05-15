@@ -160,12 +160,12 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
                     </span>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
-                    <p>The average number of blocks (content elements) per page. Higher numbers indicate more detailed and comprehensive content. Similar companies average {benchmarks.contentRichness.median.toFixed(1)} blocks per page.</p>
+                    <p>The average number of blocks (content elements) per page. Higher numbers indicate more detailed and comprehensive content. Similar companies average {benchmarks.contentRichness?.median?.toFixed(1) || '0'} blocks per page.</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <span className="text-muted-foreground">{benchmarks.contentRichness.median.toFixed(1)} blocks per page</span>
+            <span className="text-muted-foreground">{benchmarks.contentRichness?.median?.toFixed(1) || '0'} blocks per page</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             Content-rich pages provide more value and better knowledge sharing
@@ -210,12 +210,12 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
                     </span>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
-                    <p>The ratio of guest users to internal members. This indicates how much external collaboration occurs with clients, contractors, and partners. Similar companies have {(benchmarks.externalCollabRatio.median * 100).toFixed(1)}% external users.</p>
+                    <p>The ratio of guest users to internal members. This indicates how much external collaboration occurs with clients, contractors, and partners. Similar companies have {(benchmarks.externalCollabRatio?.median * 100)?.toFixed(1) || '0'}% external users.</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <span className="text-muted-foreground">{(benchmarks.externalCollabRatio.median * 100).toFixed(1)}% external collaboration</span>
+            <span className="text-muted-foreground">{(benchmarks.externalCollabRatio?.median * 100)?.toFixed(1) || '0'}% external collaboration</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             Higher external collaboration typically indicates cross-company workflows
