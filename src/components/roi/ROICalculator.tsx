@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import InputPanel from './InputPanel';
 import ResultsPanel from './ResultsPanel';
@@ -12,7 +11,7 @@ import { Settings, List } from 'lucide-react';
 const ROICalculator: React.FC = () => {
   const [inputs, setInputs] = useState<InputValues>({
     employees: 100,
-    averageSalary: 80000,
+    averageSalary: 55000,
     timeSavedPercent: 15,
     pricePerSeat: 10, // Default price per seat
   });

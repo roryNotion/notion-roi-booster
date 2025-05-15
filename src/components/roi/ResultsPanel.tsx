@@ -147,81 +147,6 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
           </p>
         </div>
         
-        {/* Content Richness Comparison */}
-        <div>
-          <div className="flex justify-between text-sm mb-1">
-            <div className="flex items-center">
-              <span className="font-medium">Content Richness</span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="cursor-help ml-1">
-                      <Info size={14} className="text-muted-foreground" />
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <p>The average number of blocks (content elements) per page. Higher numbers indicate more detailed and comprehensive content. Similar companies average {benchmarks.contentRichness?.median?.toFixed(1) || '0'} blocks per page.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <span className="text-muted-foreground">{benchmarks.contentRichness?.median?.toFixed(1) || '0'} blocks per page</span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Content-rich pages provide more value and better knowledge sharing
-          </p>
-        </div>
-        
-        {/* Database Usage Comparison */}
-        <div>
-          <div className="flex justify-between text-sm mb-1">
-            <div className="flex items-center">
-              <span className="font-medium">Database Usage</span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="cursor-help ml-1">
-                      <Info size={14} className="text-muted-foreground" />
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <p>The number of databases per team. Databases help teams organize information and workflows. Similar companies create {benchmarks.databaseUsage.benchmark.toFixed(1)} databases per team.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <span className="text-muted-foreground">{benchmarks.databaseUsage.benchmark.toFixed(1)} databases per team</span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Databases indicate structured content organization and workflows
-          </p>
-        </div>
-        
-        {/* External Collaboration Ratio */}
-        <div>
-          <div className="flex justify-between text-sm mb-1">
-            <div className="flex items-center">
-              <span className="font-medium">External Collaboration</span>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="cursor-help ml-1">
-                      <Info size={14} className="text-muted-foreground" />
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <p>The ratio of guest users to internal members. This indicates how much external collaboration occurs with clients, contractors, and partners. Similar companies have {(benchmarks.externalCollabRatio?.median * 100)?.toFixed(1) || '0'}% external users.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <span className="text-muted-foreground">{(benchmarks.externalCollabRatio?.median * 100)?.toFixed(1) || '0'}% external collaboration</span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            Higher external collaboration typically indicates cross-company workflows
-          </p>
-        </div>
-        
         {/* Integrations Comparison */}
         <div>
           <div className="flex justify-between text-sm mb-1">
@@ -325,83 +250,204 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ results }) => {
     },
   ];
 
-  const MetricCard = ({ title, value, tooltip }: { title: string, value: string | number, tooltip: string }) => (
-    <Card className="notion-card">
-      <CardContent className="p-4">
-        <div className="flex items-center gap-2">
-          <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="cursor-help">
-                  <Info size={16} className="text-muted-foreground" />
-                </span>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-xs">
-                <p>{tooltip}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-        <p className="text-2xl font-bold text-notion-darkgray">{value}</p>
-      </CardContent>
-    </Card>
-  );
-
   return (
     <div className="notion-container p-6 space-y-6 h-full flex flex-col">
       <h2 className="text-xl font-semibold text-notion-darkgray mb-4">ROI Results</h2>
       
-      <div className="grid grid-cols-1 gap-4">
-        <MetricCard 
-          title="Annual Cost Savings" 
-          value={formatCurrency(annualCostSavings)}
-          tooltip="The total monetary value of time saved across all employees in one year based on their average salary and time saved percentage."
-        />
-
-        <MetricCard 
-          title="Annual Tool Cost" 
-          value={formatCurrency(totalAnnualToolCost)}
-          tooltip="The total yearly cost of Notion licenses for all employees."
-        />
-
-        {existingToolsCost > 0 && (
-          <MetricCard 
-            title="Existing Tools Cost (Annual)" 
-            value={formatCurrency(existingToolsCost)}
-            tooltip="The annual cost of all existing tools that would be replaced by Notion."
-          />
-        )}
-
-        <MetricCard 
-          title="Return on Investment" 
-          value={formatPercent(roi)}
-          tooltip="Annual cost savings divided by the annual tool cost, representing how many times the investment is returned."
-        />
+      {/* Combined ROI Results Card */}
+      <div className="p-5 bg-blue-50 border border-blue-200 rounded-lg">
+        <h3 className="text-base font-semibold mb-2 text-notion-darkgray">ROI Summary</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Key metrics showing the value and return on investment for implementing Notion
+        </p>
         
-        <MetricCard 
-          title="Hours Saved Per Employee (Annually)" 
-          value={`${Math.round(hoursSavedPerEmployee)} hours`}
-          tooltip="The number of work hours each employee saves in a year by using Notion AI."
-        />
-        
-        <MetricCard 
-          title="Value Saved Per Employee" 
-          value={formatCurrency(valueSavedPerEmployee)}
-          tooltip="The monetary value of time saved per employee based on their average salary."
-        />
-
-        <MetricCard 
-          title="Payback Period" 
-          value={`${paybackPeriod.toFixed(1)} months`}
-          tooltip="How long it takes for the cost savings to equal the investment in Notion licenses."
-        />
-
-        <MetricCard 
-          title="Time to Productivity" 
-          value={`${Math.round(timeToProductivity)} days`}
-          tooltip="The estimated number of days until users become fully productive with Notion AI."
-        />
+        <div className="space-y-5">
+          {/* Annual Cost Savings */}
+          <div>
+            <div className="flex justify-between text-sm mb-1">
+              <div className="flex items-center">
+                <span className="font-medium">Annual Cost Savings</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help ml-1">
+                        <Info size={14} className="text-muted-foreground" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>The total monetary value of time saved across all employees in one year based on their average salary and time saved percentage.</p>
+                      <p className="text-xs mt-2 font-medium">Formula: hoursSavedPerEmployee × numberOfEmployees × averageHourlyRate</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <span className="font-medium">{formatCurrency(annualCostSavings)}</span>
+            </div>
+          </div>
+          
+          {/* Annual Tool Cost */}
+          <div>
+            <div className="flex justify-between text-sm mb-1">
+              <div className="flex items-center">
+                <span className="font-medium">Annual Tool Cost</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help ml-1">
+                        <Info size={14} className="text-muted-foreground" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>The total yearly cost of Notion licenses for all employees.</p>
+                      <p className="text-xs mt-2 font-medium">Formula: monthlyLicenseCost × 12 × numberOfUsers</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <span className="font-medium">{formatCurrency(totalAnnualToolCost)}</span>
+            </div>
+          </div>
+          
+          {/* Existing Tools Cost */}
+          {existingToolsCost > 0 && (
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <div className="flex items-center">
+                  <span className="font-medium">Existing Tools Cost (Annual)</span>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="cursor-help ml-1">
+                          <Info size={14} className="text-muted-foreground" />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p>The annual cost of all existing tools that would be replaced by Notion.</p>
+                        <p className="text-xs mt-2 font-medium">Formula: Sum of annual costs for all tools being replaced</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <span className="font-medium">{formatCurrency(existingToolsCost)}</span>
+              </div>
+            </div>
+          )}
+          
+          {/* Return on Investment */}
+          <div>
+            <div className="flex justify-between text-sm mb-1">
+              <div className="flex items-center">
+                <span className="font-medium">Return on Investment</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help ml-1">
+                        <Info size={14} className="text-muted-foreground" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>Annual cost savings divided by the annual tool cost, representing how many times the investment is returned.</p>
+                      <p className="text-xs mt-2 font-medium">Formula: annualCostSavings ÷ totalAnnualToolCost</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <span className="font-medium">{formatPercent(roi)}</span>
+            </div>
+          </div>
+          
+          {/* Hours Saved Per Employee */}
+          <div>
+            <div className="flex justify-between text-sm mb-1">
+              <div className="flex items-center">
+                <span className="font-medium">Hours Saved Per Employee (Annually)</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help ml-1">
+                        <Info size={14} className="text-muted-foreground" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>The number of work hours each employee saves in a year by using Notion AI.</p>
+                      <p className="text-xs mt-2 font-medium">Formula: hoursWorkedPerYear × efficiencyImprovement%</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <span className="font-medium">{Math.round(hoursSavedPerEmployee)} hours</span>
+            </div>
+          </div>
+          
+          {/* Value Saved Per Employee */}
+          <div>
+            <div className="flex justify-between text-sm mb-1">
+              <div className="flex items-center">
+                <span className="font-medium">Value Saved Per Employee</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help ml-1">
+                        <Info size={14} className="text-muted-foreground" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>The monetary value of time saved per employee based on their average salary.</p>
+                      <p className="text-xs mt-2 font-medium">Formula: hoursSavedPerEmployee × averageHourlyRate</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <span className="font-medium">{formatCurrency(valueSavedPerEmployee)}</span>
+            </div>
+          </div>
+          
+          {/* Payback Period */}
+          <div>
+            <div className="flex justify-between text-sm mb-1">
+              <div className="flex items-center">
+                <span className="font-medium">Payback Period</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help ml-1">
+                        <Info size={14} className="text-muted-foreground" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>How long it takes for the cost savings to equal the investment in Notion licenses.</p>
+                      <p className="text-xs mt-2 font-medium">Formula: (totalAnnualToolCost ÷ annualCostSavings) × 12 months</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <span className="font-medium">{paybackPeriod.toFixed(1)} months</span>
+            </div>
+          </div>
+          
+          {/* Time to Productivity */}
+          <div>
+            <div className="flex justify-between text-sm mb-1">
+              <div className="flex items-center">
+                <span className="font-medium">Time to Productivity</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help ml-1">
+                        <Info size={14} className="text-muted-foreground" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>The estimated number of days until users become fully productive with Notion AI.</p>
+                      <p className="text-xs mt-2 font-medium">Formula: Based on organization size and onboarding resources</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <span className="font-medium">{Math.round(timeToProductivity)} days</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Benchmark Comparison Section */}
