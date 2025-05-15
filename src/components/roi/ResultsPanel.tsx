@@ -37,11 +37,25 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
         Based on data from similar {benchmarks.companySizeCategory}-sized companies using Notion
       </p>
       
-      <div className="space-y-4">
+      <div className="space-y-5">
         {/* Time to Productivity Comparison */}
         <div>
           <div className="flex justify-between text-sm mb-1">
-            <span className="font-medium">Time to Productivity</span>
+            <div className="flex items-center">
+              <span className="font-medium">Time to Productivity</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-help ml-1">
+                      <Info size={14} className="text-muted-foreground" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>The estimated time it takes for users to become fully productive with Notion. Companies with similar size typically reach productivity in {benchmarks.timeToProductivity.benchmark} days.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <span>
               <span className="font-medium">{Math.round(results.timeToProductivity)} days</span>
               <span className="text-muted-foreground"> vs. benchmark {benchmarks.timeToProductivity.benchmark} days</span>
@@ -63,53 +77,173 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
         {/* Pages Per User Comparison */}
         <div>
           <div className="flex justify-between text-sm mb-1">
-            <span className="font-medium">Expected Pages Per User</span>
+            <div className="flex items-center">
+              <span className="font-medium">Pages Per User</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-help ml-1">
+                      <Info size={14} className="text-muted-foreground" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>The number of Notion pages created per user. More pages generally indicates greater adoption and content creation. Similar companies create {benchmarks.pagesPerUser.benchmark} pages per user on average.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <span className="text-muted-foreground">{benchmarks.pagesPerUser.benchmark} pages (median)</span>
           </div>
-          <div className="h-6 bg-gray-100 rounded-full relative">
-            <div className="absolute top-0 bottom-0 w-0.5 bg-green-500 transform -translate-x-1/2"
+          <div className="h-6 bg-gray-100 rounded-full relative mt-2">
+            <div className="absolute left-0 top-0 bottom-0 h-full bg-blue-100 rounded-full"
+                 style={{ width: '100%' }}>
+              <div className="absolute inset-0 flex items-center justify-between px-3">
+                <span className="text-xs font-medium">{benchmarks.pagesPerUser.p25}</span>
+                <span className="text-xs font-medium">{benchmarks.pagesPerUser.p75}</span>
+              </div>
+            </div>
+            <div className="absolute top-0 bottom-0 w-1 bg-green-500 transform -translate-x-1/2"
                  style={{ left: '25%' }}>
-              <div className="absolute top-full mt-1 transform -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
-                25th percentile: {benchmarks.pagesPerUser.p25}
-              </div>
             </div>
-            <div className="absolute top-0 bottom-0 w-0.5 bg-green-500 transform -translate-x-1/2"
+            <div className="absolute top-0 bottom-0 w-1 bg-blue-500 transform -translate-x-1/2"
                  style={{ left: '50%' }}>
-              <div className="absolute top-full mt-1 transform -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
-                Median: {benchmarks.pagesPerUser.benchmark}
-              </div>
             </div>
-            <div className="absolute top-0 bottom-0 w-0.5 bg-green-500 transform -translate-x-1/2"
+            <div className="absolute top-0 bottom-0 w-1 bg-green-500 transform -translate-x-1/2"
                  style={{ left: '75%' }}>
-              <div className="absolute top-full mt-1 transform -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
-                75th percentile: {benchmarks.pagesPerUser.p75}
-              </div>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground mt-5">
-            Most {benchmarks.companySizeCategory}-sized companies create between {benchmarks.pagesPerUser.p25} and {benchmarks.pagesPerUser.p75} pages per user
+          <div className="flex justify-between text-xs text-muted-foreground mt-1">
+            <span>25th percentile</span>
+            <span>Median</span>
+            <span>75th percentile</span>
+          </div>
+        </div>
+        
+        {/* Adoption Rate Comparison */}
+        <div>
+          <div className="flex justify-between text-sm mb-1">
+            <div className="flex items-center">
+              <span className="font-medium">Adoption Rate</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-help ml-1">
+                      <Info size={14} className="text-muted-foreground" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>The ratio of active users to paid seats. A higher ratio indicates better user adoption and ROI. Similar companies have an adoption rate of {(benchmarks.adoptionRate.benchmark * 100).toFixed(0)}%.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <span className="text-muted-foreground">{(benchmarks.adoptionRate.benchmark * 100).toFixed(0)}% of paid seats actively use Notion</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="bg-green-500 h-2 rounded-full" style={{ width: `${Math.min(100, benchmarks.adoptionRate.benchmark * 100)}%` }}></div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Higher adoption rates lead to better ROI and more collaboration
+          </p>
+        </div>
+        
+        {/* Content Richness Comparison */}
+        <div>
+          <div className="flex justify-between text-sm mb-1">
+            <div className="flex items-center">
+              <span className="font-medium">Content Richness</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-help ml-1">
+                      <Info size={14} className="text-muted-foreground" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>The average number of blocks (content elements) per page. Higher numbers indicate more detailed and comprehensive content. Similar companies average {benchmarks.contentRichness.median.toFixed(1)} blocks per page.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <span className="text-muted-foreground">{benchmarks.contentRichness.median.toFixed(1)} blocks per page</span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Content-rich pages provide more value and better knowledge sharing
           </p>
         </div>
         
         {/* Database Usage Comparison */}
         <div>
           <div className="flex justify-between text-sm mb-1">
-            <span className="font-medium">Expected Database Usage</span>
-            <span className="text-muted-foreground">{benchmarks.databaseUsage.benchmark} databases per team</span>
+            <div className="flex items-center">
+              <span className="font-medium">Database Usage</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-help ml-1">
+                      <Info size={14} className="text-muted-foreground" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>The number of databases per team. Databases help teams organize information and workflows. Similar companies create {benchmarks.databaseUsage.benchmark.toFixed(1)} databases per team.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <span className="text-muted-foreground">{benchmarks.databaseUsage.benchmark.toFixed(1)} databases per team</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            This indicates how structured content is created and organized in Notion by similar companies
+            Databases indicate structured content organization and workflows
+          </p>
+        </div>
+        
+        {/* External Collaboration Ratio */}
+        <div>
+          <div className="flex justify-between text-sm mb-1">
+            <div className="flex items-center">
+              <span className="font-medium">External Collaboration</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-help ml-1">
+                      <Info size={14} className="text-muted-foreground" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>The ratio of guest users to internal members. This indicates how much external collaboration occurs with clients, contractors, and partners. Similar companies have {(benchmarks.externalCollabRatio.median * 100).toFixed(1)}% external users.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <span className="text-muted-foreground">{(benchmarks.externalCollabRatio.median * 100).toFixed(1)}% external collaboration</span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Higher external collaboration typically indicates cross-company workflows
           </p>
         </div>
         
         {/* Integrations Comparison */}
         <div>
           <div className="flex justify-between text-sm mb-1">
-            <span className="font-medium">Expected Tool Consolidation</span>
+            <div className="flex items-center">
+              <span className="font-medium">Tool Consolidation</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-help ml-1">
+                      <Info size={14} className="text-muted-foreground" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>The percentage of users who connect other tools to Notion through integrations. Higher percentages indicate better tool consolidation and reduced context switching. Similar companies see {(benchmarks.integrationsPerUser.benchmark * 100).toFixed(1)}% of users using integrations.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <span className="text-muted-foreground">{(benchmarks.integrationsPerUser.benchmark * 100).toFixed(1)}% of users connect integrations</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            This shows how many other tools companies typically integrate with Notion
+            Integrations help reduce context switching between different tools
           </p>
         </div>
       </div>
