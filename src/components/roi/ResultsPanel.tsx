@@ -51,7 +51,18 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
                     </span>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
-                    <p>The estimated time it takes for users to become fully productive with Notion. Companies with similar size typically reach productivity in {benchmarks.timeToProductivity.benchmark} days.</p>
+                    <p className="font-medium">What this means:</p>
+                    <p className="mb-2">The estimated time it takes for users to become fully productive with Notion.</p>
+                    
+                    <p className="font-medium">Your performance:</p>
+                    <p className="mb-2">Your team is estimated to reach productivity in <span className="font-medium">{Math.round(results.timeToProductivity)} days</span>, while similar companies typically take <span className="font-medium">{benchmarks.timeToProductivity.benchmark} days</span>.</p>
+                    
+                    <p className="font-medium">What's good:</p>
+                    <p className="mb-2">{benchmarks.timeToProductivity.percentile > 50 ? 
+                      "Your team is faster than average at adopting Notion, which means quicker ROI." : 
+                      "Faster adoption times (fewer days) lead to quicker ROI and value realization."}</p>
+                    
+                    <p className="text-xs mt-2 font-medium">Formula: Based on company size, user technical proficiency, and training resources</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -69,8 +80,8 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             {benchmarks.timeToProductivity.percentile > 50 
-              ? "You're faster than average at getting productive with Notion"
-              : "Most similar companies reach productivity in fewer days"}
+              ? `You're in the top ${Math.round(100 - benchmarks.timeToProductivity.percentile)}% for quick adoption`
+              : `${Math.round(benchmarks.timeToProductivity.percentile)}% of similar companies reach productivity faster`}
           </p>
         </div>
         
@@ -87,7 +98,16 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
                     </span>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
-                    <p>The number of Notion pages created per user. More pages generally indicates greater adoption and content creation. Similar companies create {benchmarks.pagesPerUser.benchmark} pages per user on average.</p>
+                    <p className="font-medium">What this means:</p>
+                    <p className="mb-2">The average number of pages created per active user, indicating content creation and platform adoption.</p>
+                    
+                    <p className="font-medium">Benchmark comparison:</p>
+                    <p className="mb-2">Similar companies create an average of <span className="font-medium">{benchmarks.pagesPerUser.benchmark}</span> pages per user.</p>
+                    
+                    <p className="font-medium">What's good:</p>
+                    <p className="mb-2">Higher numbers (above {benchmarks.pagesPerUser.p50}) indicate better adoption and more active usage of Notion. Top performers create {benchmarks.pagesPerUser.p75}+ pages per user.</p>
+                    
+                    <p className="text-xs mt-2 font-medium">Formula: totalPages ÷ numberOfActiveUsers</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -117,6 +137,9 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
             <span>Median</span>
             <span>75th percentile</span>
           </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            The more pages per user, the higher the engagement and return on Notion investment
+          </p>
         </div>
         
         {/* Adoption Rate Comparison */}
@@ -132,7 +155,16 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
                     </span>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
-                    <p>The ratio of active users to paid seats. A higher ratio indicates better user adoption and ROI. Similar companies have an adoption rate of {(benchmarks.adoptionRate.benchmark * 100).toFixed(0)}%.</p>
+                    <p className="font-medium">What this means:</p>
+                    <p className="mb-2">The percentage of licensed users who actively use Notion, indicating license utilization efficiency.</p>
+                    
+                    <p className="font-medium">Benchmark comparison:</p>
+                    <p className="mb-2">In similar {benchmarks.companySizeCategory}-sized companies, <span className="font-medium">{(benchmarks.adoptionRate.benchmark * 100).toFixed(0)}%</span> of paid seats actively use Notion.</p>
+                    
+                    <p className="font-medium">What's good:</p>
+                    <p className="mb-2">Higher is better - best-performing companies achieve 85%+ adoption rates. Low adoption rates (below 60%) indicate underutilized licenses and potential wasted spend.</p>
+                    
+                    <p className="text-xs mt-2 font-medium">Formula: (activeUsers ÷ totalPaidSeats) × 100%</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -143,7 +175,7 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
             <div className="bg-green-500 h-2 rounded-full" style={{ width: `${Math.min(100, benchmarks.adoptionRate.benchmark * 100)}%` }}></div>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Higher adoption rates lead to better ROI and more collaboration
+            Target: 80%+ for optimal ROI (higher adoption = more value from each license)
           </p>
         </div>
         
@@ -160,15 +192,27 @@ const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ result
                     </span>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
-                    <p>The percentage of users who connect other tools to Notion through integrations. Higher percentages indicate better tool consolidation and reduced context switching. Similar companies see {(benchmarks.integrationsPerUser.benchmark * 100).toFixed(1)}% of users using integrations.</p>
+                    <p className="font-medium">What this means:</p>
+                    <p className="mb-2">The percentage of users who connect other tools to Notion through integrations, reducing context switching.</p>
+                    
+                    <p className="font-medium">Benchmark comparison:</p>
+                    <p className="mb-2">In similar companies, <span className="font-medium">{(benchmarks.integrationsPerUser.benchmark * 100).toFixed(1)}%</span> of users connect Notion to other tools via integrations.</p>
+                    
+                    <p className="font-medium">What's good:</p>
+                    <p className="mb-2">Companies with higher integration rates (60%+) report significantly higher productivity gains and ROI from their Notion investment.</p>
+                    
+                    <p className="text-xs mt-2 font-medium">Formula: (usersWithIntegrations ÷ totalUsers) × 100%</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
             <span className="text-muted-foreground">{(benchmarks.integrationsPerUser.benchmark * 100).toFixed(1)}% of users connect integrations</span>
           </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="bg-green-500 h-2 rounded-full" style={{ width: `${Math.min(100, benchmarks.integrationsPerUser.benchmark * 100)}%` }}></div>
+          </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Integrations help reduce context switching between different tools
+            Each integration reduces context switching and improves workflow efficiency
           </p>
         </div>
       </div>
