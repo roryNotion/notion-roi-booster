@@ -1,5 +1,5 @@
-
 // Calculation utilities for the ROI Calculator
+import { CompanyBenchmarks, getBenchmarkData, getCompanySizeCategory } from './benchmarks';
 
 export interface AssumptionValues {
   aiCallsPerWeek: number;
@@ -47,6 +47,29 @@ export interface CalculationResults {
     year5: number;
   };
   existingToolsCost: number;
+  
+  // New benchmark data
+  benchmarks: {
+    companySizeCategory: string;
+    timeToProductivity: {
+      benchmark: number;
+      percentile?: number;
+    };
+    pagesPerUser: {
+      benchmark: number;
+      p25: number;
+      p75: number;
+    };
+    adoptionRate: {
+      benchmark: number;
+    };
+    integrationsPerUser: {
+      benchmark: number;
+    };
+    databaseUsage: {
+      benchmark: number;
+    };
+  };
 }
 
 // Calculate ROI based on inputs and assumptions
@@ -117,6 +140,16 @@ export const calculateROI = (
   
   // Calculate payback period in months (how long until the tool pays for itself)
   const paybackPeriod = (pricePerSeat * 12) / valueSavedPerEmployee;
+  
+  // Get benchmark data for the company size
+  const sizeCategory = getCompanySizeCategory(employees);
+  const benchmarks = getBenchmarkData(employees);
+  
+  // Helper function to calculate percentile ranking
+  const calculatePercentile = (value: number, benchmark: number): number => {
+    // Simple calculation - better is lower for time to productivity, so invert ratio
+    return Math.min(100, Math.max(0, (benchmark / value) * 50));
+  };
 
   return {
     annualCostSavings: totalCostSaved,
@@ -135,7 +168,30 @@ export const calculateROI = (
       year3: year3Roi,
       year5: year5Roi
     },
-    existingToolsCost
+    existingToolsCost,
+    
+    // Add benchmark data
+    benchmarks: {
+      companySizeCategory: sizeCategory,
+      timeToProductivity: {
+        benchmark: benchmarks.timeToProductivity.days,
+        percentile: calculatePercentile(timeToProductivity, benchmarks.timeToProductivity.days)
+      },
+      pagesPerUser: {
+        benchmark: benchmarks.pagesPerUser.median,
+        p25: benchmarks.pagesPerUser.p25,
+        p75: benchmarks.pagesPerUser.p75
+      },
+      adoptionRate: {
+        benchmark: benchmarks.adoptionRate.median
+      },
+      integrationsPerUser: {
+        benchmark: benchmarks.integrationsPerUser.median
+      },
+      databaseUsage: {
+        benchmark: benchmarks.databaseUsage.median
+      }
+    }
   };
 };
 

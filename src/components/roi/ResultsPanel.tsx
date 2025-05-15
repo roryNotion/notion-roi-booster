@@ -24,6 +24,99 @@ interface ResultsPanelProps {
   results: CalculationResults;
 }
 
+// New component for benchmark comparison
+const BenchmarkComparison: React.FC<{ results: CalculationResults }> = ({ results }) => {
+  const { benchmarks } = results;
+
+  if (!benchmarks) return null;
+  
+  return (
+    <div className="mt-6 p-5 bg-blue-50 border border-blue-200 rounded-lg">
+      <h3 className="text-base font-semibold mb-2 text-notion-darkgray">How You Compare</h3>
+      <p className="text-sm text-muted-foreground mb-4">
+        Based on data from similar {benchmarks.companySizeCategory}-sized companies using Notion
+      </p>
+      
+      <div className="space-y-4">
+        {/* Time to Productivity Comparison */}
+        <div>
+          <div className="flex justify-between text-sm mb-1">
+            <span className="font-medium">Time to Productivity</span>
+            <span>
+              <span className="font-medium">{Math.round(results.timeToProductivity)} days</span>
+              <span className="text-muted-foreground"> vs. benchmark {benchmarks.timeToProductivity.benchmark} days</span>
+            </span>
+          </div>
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-blue-500" 
+              style={{ width: `${benchmarks.timeToProductivity.percentile}%` }}
+            />
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            {benchmarks.timeToProductivity.percentile > 50 
+              ? "You're faster than average at getting productive with Notion"
+              : "Most similar companies reach productivity in fewer days"}
+          </p>
+        </div>
+        
+        {/* Pages Per User Comparison */}
+        <div>
+          <div className="flex justify-between text-sm mb-1">
+            <span className="font-medium">Expected Pages Per User</span>
+            <span className="text-muted-foreground">{benchmarks.pagesPerUser.benchmark} pages (median)</span>
+          </div>
+          <div className="h-6 bg-gray-100 rounded-full relative">
+            <div className="absolute top-0 bottom-0 w-0.5 bg-green-500 transform -translate-x-1/2"
+                 style={{ left: '25%' }}>
+              <div className="absolute top-full mt-1 transform -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
+                25th percentile: {benchmarks.pagesPerUser.p25}
+              </div>
+            </div>
+            <div className="absolute top-0 bottom-0 w-0.5 bg-green-500 transform -translate-x-1/2"
+                 style={{ left: '50%' }}>
+              <div className="absolute top-full mt-1 transform -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
+                Median: {benchmarks.pagesPerUser.benchmark}
+              </div>
+            </div>
+            <div className="absolute top-0 bottom-0 w-0.5 bg-green-500 transform -translate-x-1/2"
+                 style={{ left: '75%' }}>
+              <div className="absolute top-full mt-1 transform -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
+                75th percentile: {benchmarks.pagesPerUser.p75}
+              </div>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-5">
+            Most {benchmarks.companySizeCategory}-sized companies create between {benchmarks.pagesPerUser.p25} and {benchmarks.pagesPerUser.p75} pages per user
+          </p>
+        </div>
+        
+        {/* Database Usage Comparison */}
+        <div>
+          <div className="flex justify-between text-sm mb-1">
+            <span className="font-medium">Expected Database Usage</span>
+            <span className="text-muted-foreground">{benchmarks.databaseUsage.benchmark} databases per team</span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            This indicates how structured content is created and organized in Notion by similar companies
+          </p>
+        </div>
+        
+        {/* Integrations Comparison */}
+        <div>
+          <div className="flex justify-between text-sm mb-1">
+            <span className="font-medium">Expected Tool Consolidation</span>
+            <span className="text-muted-foreground">{(benchmarks.integrationsPerUser.benchmark * 100).toFixed(1)}% of users connect integrations</span>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            This shows how many other tools companies typically integrate with Notion
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ResultsPanel: React.FC<ResultsPanelProps> = ({ results }) => {
   const {
     annualCostSavings,
@@ -176,6 +269,9 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({ results }) => {
           tooltip="The estimated number of days until users become fully productive with Notion AI."
         />
       </div>
+
+      {/* Benchmark Comparison Section */}
+      {results.benchmarks && <BenchmarkComparison results={results} />}
 
       <div className="flex-grow mt-4">
         <h3 className="text-sm font-medium text-muted-foreground mb-4">Visualisation</h3>
